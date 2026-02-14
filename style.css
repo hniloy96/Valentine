@@ -159,15 +159,17 @@ section.active {
 .heart-on-lap::after { left: 15px; top: 0; }
 
 .press-me-text {
-    font-size: 2.2rem;
+    font-size: 2rem; /* Slightly smaller for mobile */
     font-family: "Comic Sans MS", cursive;
     color: white;
     font-weight: bold;
     margin-top: 15px;
+    /* Cleaner outline: uses 1.5px instead of 3px to prevent the "messed up" look */
     text-shadow: 
-        -3px -3px 0 #000, 3px -3px 0 #000,
-        -3px  3px 0 #000, 3px  3px 0 #000,
+        -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000,
+        -1.5px  1.5px 0 #000, 1.5px  1.5px 0 #000,
          0px 5px 10px rgba(0,0,0,0.3);
+    letter-spacing: 1px; /* Adds breathing room between letters */
     animation: pressMeBounce 1s ease-in-out infinite;
     will-change: transform; 
 }
