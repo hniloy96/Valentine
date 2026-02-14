@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="For My Wife">
+    <title>For My Wife</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/bear.png">
+    <audio id="loop-1" src="assets/loop_1.mp3" loop preload="auto"></audio>
+    <audio id="loop-2" src="assets/loop_2.mp3" loop preload="auto"></audio>
+    <audio id="press-me-audio" src="assets/press_me.mp3" preload="auto"></audio>
+    <audio id="fav-song" src="assets/song.mp3" preload="auto"></audio>
+    <audio id="wow-audio" src="assets/wow.mp3" preload="auto"></audio>
+    <audio id="wrong-audio" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="button-click" src="assets/button.mp3" preload="auto"></audio>
+</head>
+<body>
+
+    <div id="balloon-container" class="hidden"></div>
+
+    <div id="audio-unlock">
+        <div class="unlock-button">Start</div>
+    </div>
+
+    <section id="start-screen" class="active">
+        <div id="bear-container" style="margin-top: 60px;"> 
+            <img src="assets/bear.png" id="bear-img" alt="Cute Bear">
+            <div class="heart-on-lap">
+                <span class="heart-reflection"></span>
+            </div>
+            <p class="press-me-text">Aren't I cute?</p> 
+            <p class="go-on">Go on, press me!</p>
+        </div>
+    </section>
+
+    <section id="narrative-screen">
+        <div id="message-container">
+            <h2 id="fading-text"></h2>
+        </div>
+    </section>
+
+    <section id="puzzle-screen">
+        <div id="game-container">
+            <div id="answer-slots"></div>
+
+            <div id="feedback-msg" class="hidden">
+                <div class="text">TRY AGAIN!!!</div>
+                <div class="sub-text">(Tap anywhere to return)</div>
+            </div>
+
+            <div id="scrambled-keyboard"></div>
+
+            <div id="controls">
+                <button id="undo-btn">UNDO</button>
+                <button id="hint-btn">HINT</button>
+            </div>
+        </div>
+
+        <div id="hint-display" class="hidden">
+            <div class="hint-content">
+                <p>Hint:</p>
+                <h5 class="hint-content-mod">চার শব্দের বাক্য সে,</h5>
+                <h5 class="hint-content-mod">ফেব্রুয়ারীর পণ্য।</h5>
+                <h5 class="hint-content-mod">আষাঢ় মাঘ ফাগুন, তুমি আমার</h5>
+                <h4>সারাজীবনের জন্য 😘 !!!</h4>
+                <button id="close-hint">Got it!</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="win-overlay" class="hidden">
+        <div class="credits-container">
+            <div class="credits-scroll">
+                <h1 id="above-item" class="win-text">YOU GOT IT!!!</h1>
+                <div class="credit-item">
+                    <div id="above-item" class="credit-moment">I'm proud of you, Baba!!!</div>
+                </div>
+
+                 <div class="credit-item">
+                    <div id="above-item" class="credit-moment">Wanna go memory hopping for a bit?</div>
+                </div>
+
+                 <div class="credit-item">
+                    <div id="above-item" class="credit-moment">Let's go!!!</div>
+                </div>
+
+                <div class="credit-item">
+                    <img id="above-item" src="assets/photo1.jpeg" class="credit-photo">
+                    <div id="above-item" class="credit-moment">Remember the time I sent you a 100 Roses?</div>
+                    <div id="above-item" class="credit-moment">Don't worry.</div>
+                    <div id="above-item" class="credit-moment">You will get 105 this year!</div>
+                </div>
+
+                <div class="credit-item">
+                    <img id="above-item" src="assets/photo2.jpeg" class="credit-photo">
+                    <div id="above-item" class="credit-moment">I have yet to see you in this saree.</div>
+                    <div id="above-item" class="credit-moment">Can't wait!</div>
+                    <div id="above-item" class="credit-moment">My first gift to you.</div>
+                </div>
+
+                <div class="credit-item">
+                    <img id="above-item" src="assets/photo3.jpeg" class="credit-photo">
+                    <div id="above-item" class="credit-moment">The hurdles we had to face.</div>
+                    <div id="above-item" class="credit-moment">And even after all that.</div>
+                    <div id="above-item" class="credit-moment">Somehow, I knew I wasn't gonna ever leave your side.</div>
+                </div>
+
+                <div class="credit-item">
+                    <img id="above-item" src="assets/photo4.jpeg" class="credit-photo">
+                    <div id="above-item" class="credit-moment">Our first vacation.</div>
+                    <div id="above-item" class="credit-moment">I miss walking down the shoreline holding your hand.</div>
+                </div>
+
+                <div class="credit-item">
+                    <img id="above-item" src="assets/photo5.jpeg" class="credit-photo">
+                    <div id="above-item" class="credit-moment">Our first proper date.</div>
+                    <div id="above-item" class="credit-moment">Before this, we always had "চেংড়া পোলাপান" with us. 😂</div>
+                </div>
+
+                <div class="credit-item">
+                    <img id="above-item" src="assets/photo6.jpeg" class="credit-photo">
+                    <div id="above-item" class="credit-moment">Our first Eid.</div>
+                    <div id="above-item" class="credit-moment">Everything about this day was perfect!!!</div>
+                    <div id="above-item" class="credit-moment">I wanna spend all my Eids with you.</div>
+                </div>
+
+                <div class="credit-item">
+                    <div class="final-message">
+                        <p id="above-item" class="credit-moment">here's to many more firsts yet to come.</p>
+                    <p id="above-item" class="credit-moment">I know they'll all be with you only.</p>
+                    <div class="final-gif-row">
+                        <img src="assets/photo7.gif" class="credit-photo" id="above-item">
+                        <img src="assets/photo8.gif" class="credit-photo" id="above-item">
+                    </div>
+                    <h4 id="above-item">I Love You Infinity</h4>
+                    <h2 id="above-item">Happy Valentine's Day <br> Wife 💕</h2>
+                </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

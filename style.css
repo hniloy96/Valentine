@@ -1,0 +1,630 @@
+:root {
+    --bg-color: #ffffff;
+    --accent-red: #d63031;
+    --text-dark: #2d3436;
+    --heart-pink: #ff4d4d;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    color: var(--text-dark);
+    overflow: hidden;
+    height: 100svh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Section Management --- */
+section {
+    display: none;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+section.active { 
+    display: flex; 
+}
+
+/* --- Initial Start Overlay --- */
+#audio-unlock {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #ffffff;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.unlock-button {
+    padding: 20px 40px;
+    background-color: var(--text-dark);
+    color: #ffffff;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    animation: smoothPulse 2s infinite ease-in-out;
+}
+
+#close-hint {
+    padding: 10px 20px;
+    background-color: var(--text-dark);
+    color: #ffffff;
+    font-size: .8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    animation: smoothPulse 2s infinite ease-in-out;
+}
+
+/* --- Hover & Press Effects --- */
+
+/* For Desktop Hover */
+.unlock-button:hover, 
+#close-hint:hover {
+    filter: brightness(1.1); /* Slightly brightens the button */
+    cursor: pointer;
+}
+
+/* The "Press" Effect */
+.unlock-button:active, 
+#close-hint:active {
+    transform: scale(0.96) translateY(4px); /* Shrinks slightly and moves down */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* flattens the shadow */
+    transition: transform 0.1s ease; /* makes the snap-back quick */
+}
+
+/* --- Start Screen & Bear --- */
+#bear-container {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+#bear-img {
+    width: 200px;
+    height: auto;
+    animation: bearBreathe 3s ease-in-out infinite;
+}
+
+.heart-on-lap {
+    position: absolute;
+    bottom: 37%; /* Changed from 30% to move it up ~5px */
+    width: 30px;
+    height: 30px;
+    background-color: var(--heart-pink);
+    transform: rotate(-45deg);
+    animation: heartbeat 1.2s infinite;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+}
+
+.heart-reflection {
+    position: absolute;
+    top: 5px;   /* Position it near the top-left curve */
+    right: -10px;
+    width: 8px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.4); /* Soft white highlight */
+    border-radius: 50%;
+    transform: rotate(15deg); /* Slant it slightly for a natural look */
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* We don't need a separate @keyframes for the reflection.
+   By putting it inside the heart div, it already moves with it, 
+   but adding the heartbeat animation here ensures the "glow" 
+   pulsates at the exact same rhythm.
+*/
+.heart-reflection {
+    animation: heartbeat 1.2s infinite;
+}
+
+.heart-on-lap::before,
+.heart-on-lap::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: var(--heart-pink);
+    border-radius: 50%;
+}
+
+.heart-on-lap::before { top: -15px; left: 0; }
+.heart-on-lap::after { left: 15px; top: 0; }
+
+.press-me-text {
+    font-size: 2.2rem;
+    font-family: "Comic Sans MS", cursive;
+    color: white;
+    font-weight: bold;
+    margin-top: 15px;
+    text-shadow: 
+        -3px -3px 0 #000, 3px -3px 0 #000,
+        -3px  3px 0 #000, 3px  3px 0 #000,
+         0px 5px 10px rgba(0,0,0,0.3);
+    animation: pressMeBounce 1s ease-in-out infinite;
+    will-change: transform; 
+}
+
+/* --- Narrative Screen --- */
+#narrative-screen {
+    z-index: 20;
+}
+
+#fading-text {
+    font-size: 1.8rem;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 0 30px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+#fading-text.visible { 
+    opacity: 1; 
+}
+
+/* --- Visual Elements --- */
+#balloon-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    overflow: hidden;
+    /* Default: Stay behind the puzzle */
+    z-index: 10; 
+}
+
+/* When the game is over, we use JS to add this class */
+#balloon-container.on-top {
+    /* Higher than the win-overlay (5000) but lower than the text (5002) */
+    z-index: 1000; 
+    transform: translateZ(0);
+}
+
+.balloon {
+    position: absolute;
+    bottom: -100px;
+    width: 40px;
+    height: 50px;
+    border-radius: 50%;
+    animation: floatUp 8s linear infinite;
+    z-index: 10;
+}
+
+/* --- Utility Classes --- */
+.fade-out-content {
+    opacity: 0 !important;
+    transition: opacity 0.8s ease-out !important;
+    pointer-events: none;
+}
+
+/* --- Animations --- */
+@keyframes smoothPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+@keyframes bearBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes heartbeat { 0% { transform: scale(1) rotate(-45deg); } 20% { transform: scale(1.2) rotate(-45deg); } 40% { transform: scale(1) rotate(-45deg); } 60% { transform: scale(1.1) rotate(-45deg); } 100% { transform: scale(1) rotate(-45deg); } }
+@keyframes pressMeBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 0.7; } 100% { transform: translateY(-110vh) rotate(15deg); opacity: 0; } }
+
+/* done with the narrative now game  */
+
+:root {
+    --accent: #d63031;
+    --dark: #2d3436;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+#game-container {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+#puzzle-screen {
+    z-index: 20; /* Much higher than balloons */
+    position: relative; 
+    background-color: transparent !important; /* Important so balloons show through */
+}
+
+/* Slots and Word Wrapping */
+#answer-slots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.word-block { display: flex; gap: 5px; justify-content: center; }
+.break { flex-basis: 100%; height: 0; }
+
+.slot {
+    width: 32px;
+    height: 45px;
+    border-bottom: 3px solid var(--dark);
+    font-size: 1.8rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent);
+}
+
+.slot.is-fixed { border-bottom: 3px solid var(--accent); opacity: 0.8; }
+
+/* Keyboard & Controls */
+#scrambled-keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+
+.key {
+    width: 48px;
+    height: 48px;
+    background: white;
+    border: 2px solid var(--dark);
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 0 var(--dark);
+}
+
+.key:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--dark); }
+.key.used { opacity: 0; pointer-events: none; }
+
+#controls { margin-top: 30px; display: flex; justify-content: center; gap: 10px; }
+
+#undo-btn, #hint-btn {
+    background: white;
+    border: 2px solid var(--dark);
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--dark);
+}
+
+/* Overlays */
+#hint-display {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+#hint-display { background: rgba(255, 255, 255, 0.95); }
+
+.hint-content {
+    background: white;
+    padding: 30px;
+    border: 3px solid var(--accent);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.hint-content { font-size: 2.2rem; color: var(--accent); margin: 15px 0; }
+
+.hint-content-mod {
+    font-size: 1.5rem; color: black; margin: 10px 0;
+}
+/* Full Screen Reset Overlay */
+#feedback-msg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+#feedback-msg .text {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--accent);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#feedback-msg .sub-text {
+    font-size: 1rem;
+    color: var(--dark);
+    margin-top: 20px;
+    opacity: 0.6;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* THE FIX: Ensures the hidden class actually works on a Flex element */
+.hidden { 
+    display: none !important; 
+}
+
+/* Heart Confetti */
+.confetti {
+    position: fixed;
+    top: -50px;
+    z-index: 1500;
+    pointer-events: none;
+    animation: fall linear infinite;
+    transform: translateZ(15px);
+    opacity: 0.5;
+}
+
+.confetti svg {
+    display: block;
+    animation: sway ease-in-out infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 0.5; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(110vh); opacity: 0; }
+}
+
+@keyframes sway {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    50% { transform: translateX(50px) rotate(20deg); }
+}
+
+.win-text { margin-bottom: 25px; font-size: 2.5rem; color: var(--accent); animation: winPulse 2s infinite; }
+@keyframes winPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.hidden { display: none !important; }
+
+/* credits */
+
+/* --- Win Overlay & Credits --- */
+#win-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #ffffff;
+    z-index: 500;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    transform: translateZ(0);
+    /* Remove align-items: center from here to let it scroll naturally */
+}
+
+.credits-container {
+    width: 90%;
+    max-width: 500px;
+    height: 100%;
+    z-index: 5000;
+    transform: translateZ(10px);
+}
+
+.credits-scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    animation: movieCredits 80s linear forwards;
+    z-index: 7000; /* Highest layer */
+    transform: translateZ(100px);
+}
+
+.credit-item {
+    margin-bottom: 120px; /* Space between photos */
+    text-align: center;
+    width: 100%;
+}
+
+.credit-item p, 
+.credit-moment,
+.scroll-intro,
+.win-text {
+    font-weight: 500 !important; /* Extra Bold */
+    margin-bottom: 10px;
+    line-height: 1.5;
+    position: relative;
+    z-index: 7002;
+}
+
+.credit-moment {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+}
+
+/* --- Image Spacing --- */
+.credit-photo {
+    width: 100%;
+    max-width: 150px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.credit-photo-final {
+    width: 44%; /* Fits two side-by-side */
+    max-width: 100px;
+    height: auto;
+    border-radius: 12px;
+    border: 4px solid white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    margin-bottom: 25px;
+}
+
+/* --- THE STICKY CENTER MESSAGE --- */
+.final-message {
+    width: 100%;
+    height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    /* This ensures it uses all available space to center vertically */
+    justify-content: center; 
+    align-items: center;
+    text-align: center;
+    flex-shrink: 0;
+    
+    /* ADD THIS: Forces the content to account for the mobile bottom bar */
+    padding-bottom: env(safe-area-inset-bottom);
+    
+    /* OPTIONAL: If it still feels too high, add a small top padding to push it down */
+    /* padding-top: 20px; */ 
+}
+
+.final-gif-row {
+    display: flex;
+    flex-direction: row; 
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+
+.final-message h4 {
+    font-size: 1.6rem;
+    color: var(--accent);
+}
+
+.final-message h2 {
+    font-size: 2.0rem;
+    color: var(--accent);
+    font-weight: 900;
+    margin-top: 5px;
+}
+
+
+/* --- THE KEY: The Animation --- */
+@keyframes movieCredits {
+    0% { 
+        transform: translateY(100vh); 
+    }
+    100% { 
+        /* Adding +20px (or more) will let it scroll slightly further, 
+           effectively moving the text "down" on the screen */
+        transform: translateY(calc(-100% + 100vh + 20px)); 
+    }
+}
+
+#above-item {
+    position: relative;
+    z-index: 6000 !important; 
+}
+
+/* --- iPhone 16 Pro Optimization --- */
+@media screen and (max-width: 402px) {
+    /* 1. Scale down the bear and press me text */
+    #bear-img {
+        width: 160px;
+    }
+    .press-me-text {
+        font-size: 1.8rem;
+    }
+
+    /* 2. Fix the Keyboard (Prevents letters from being too big) */
+    .key {
+        width: 35px;
+        height: 35px;
+        font-size: 1.0rem;
+        gap: 8px;
+    }
+    #scrambled-keyboard {
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    /* 3. Adjust Answer Slots */
+    .slot {
+        width: 26px;
+        height: 38px;
+        font-size: 1.4rem;
+    }
+    #answer-slots {
+        gap: 10px;
+    }
+
+    /* 4. Narrative Text Spacing */
+    #fading-text {
+        font-size: 1.5rem;
+        padding: 0 20px;
+        font-weight: 500;
+    }
+
+    /* 5. Win Screen & Credits */
+    .win-text {
+        font-size: 1.8rem;
+    }
+    .scroll-intro {
+        font-size: 1.2rem;
+    }
+    .credit-moment {
+        font-size: 1rem;
+        padding: 0 15px;
+    }
+    .credit-photo {
+        max-width: 130px; /* Slightly smaller to fit vertical height better */
+    }
+
+    /* 6. Finale sticky text */
+    .final-message h2 {
+        font-size: 1.4rem;
+    }
+    .final-message h4 {
+        font-size: 1.0rem;
+    }
+    .credit-photo-final {
+        max-width: 85px;
+    }
+}
+
+.go-on {
+    font-weight: 500;
+}
